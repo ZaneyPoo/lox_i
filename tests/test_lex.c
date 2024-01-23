@@ -179,6 +179,7 @@ void test_identifiers(void)
 
 void test_string(void)
 {
+    // TODO: Expand this test to test the expected length
     TOKEN_TEST(STRING);
 }
 
@@ -198,6 +199,30 @@ void test_keywords(void)
 
 
 
+void test_comments(void)
+{
+    // TODO: Add this test
+    TEST_IGNORE_MESSAGE("Unimplemented");
+}
+
+
+
+void test_whitespace(void)
+{
+    // TODO: Add this test
+    TEST_IGNORE_MESSAGE("Unimplemented");
+}
+
+
+
+void test_line_count(void)
+{
+    // TODO: Add this test
+    TEST_IGNORE_MESSAGE("Unimplemented");
+}
+
+
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -208,6 +233,9 @@ int main(void)
     RUN_TEST(test_string);
     RUN_TEST(test_numbers);
     RUN_TEST(test_keywords);
+    RUN_TEST(test_comments);
+    RUN_TEST(test_whitespace);
+    RUN_TEST(test_line_count);
 
     return UNITY_END();
 }
