@@ -3,7 +3,7 @@
 CC       := gcc
 CFLAGS   := -g -Wall -Wextra -std=gnu17
 CPPFLAGS := -DUNITY_OUTPUT_COLOR
-BIN      := zbc
+BIN      := zli
 
 SRC_DIR  := src
 H_DIR    := incl
