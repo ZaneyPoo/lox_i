@@ -1,34 +1,87 @@
-#ifndef ZBASIC_PARSE_H_
-#define ZBASIC_PARSE_H_
+#ifndef ZLOX_PARSE_H_
+#define ZLOX_PARSE_H_
 #include "lex.h"
 #include <stdbool.h>
 
+typedef struct Node Node;
 
-typedef enum ErrorState 
+typedef enum NodeType
 {
-    OK = 0,
-} ErrorState;
+    NodeExpr = 0,
+    NodeExprEquality,
+    NodeExprComparison,
+    NodeExprTerm,
+    NodeExprFactor,
+    NodeExprUnary,
+    NodeExprPrimary,
+    NodeExprPrimaryLiteral,
+    NodeExprPrimaryGrouping,
+    NUM_NODE_TYPES,
+} NodeType;
+
+
+// TODO: No clue if this is a good structure for this or not
+struct Node 
+{
+    NodeType type;
+    union 
+    {
+        struct 
+        {
+            Node* data;
+        };
+
+        struct 
+        {
+            Node* left;
+            Token oper;
+            Node* right;
+        } NodeExpBinary;
+
+        struct 
+        {
+            Token oper;
+            Node* data;
+        } NodeExprUnary;
+
+
+        Token literal;
+
+        struct 
+        {
+            Token open_paren;
+            Node* expr;
+            Token close_paren;
+        } NodeExprPrimaryGrouping;
+    };
+};
+
+Node* Node_new(NodeType type);
+
+void Node_delete(Node* node);
+
+const char* Node_get_type_name(NodeType type);
+
+void Node_display(Node* node);
 
 
 typedef struct Parser
 {
     Lexer* lexer;
-    Token* tokens;
-    size_t num_tokens;
-    size_t cursor;
-    Token* current;
+    Token current;
+    Token prev;
 } Parser;
 
 Parser Parser_new(Lexer* lexer);
 
 void Parser_delete(Parser* parser);
 
-bool Parser_check(Parser* parser, TokenType type);
+Token* Parser_next(Parser* parser);
 
-bool Parser_check_peek(Parser* parser, TokenType type);
+Token* Parser_peek(Parser* parser);
 
-void Parser_next(Parser* parser);
+bool Parser_eof(Parser* parser);
 
-bool Parser_parse(Parser* parser);
+Node* Parser_parse(Parser* parser);
 
-#endif // ZBASIC_PARSE_H_
+#endif // ZLOX_PARSE_H_
