@@ -1,5 +1,5 @@
-#ifndef ZBASIC_LEX_H_
-#define ZBASIC_LEX_H_
+#ifndef ZLOX_LEX_H_
+#define ZLOX_LEX_H_
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -102,4 +102,4 @@ void Lexer_skip_comment(Lexer* lexer);
 
 Token Lexer_get_token(Lexer* lexer);
 
-#endif // ZBASIC_LEX_H_
+#endif // ZLOX_LEX_H_

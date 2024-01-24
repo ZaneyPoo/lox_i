@@ -1,5 +1,5 @@
-#ifndef ZBASIC_UTILS_H_
-#define ZBASIC_UTILS_H_
+#ifndef ZLOX_UTILS_H_
+#define ZLOX_UTILS_H_
 
 #define LOGGING_ENABLE
 
@@ -12,6 +12,8 @@ typedef enum LogLevel
     LOG_LVL_ERROR,
     LOG_LVL_FATAL,
 } LogLevel;
+
+// TODO: flesh this out and actually use it
 
 void log_print(LogLevel lvl, const char* msg);
 
@@ -35,4 +37,4 @@ void log_print(LogLevel lvl, const char* msg);
 
 #endif // LOGGING_ENABLE
 
-#endif // ZBASIC_UTILS_H_
+#endif // ZLOX_UTILS_H_
