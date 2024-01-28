@@ -1,4 +1,4 @@
-#include "parse.h"
+#include "../incl/parse.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,6 +20,22 @@ static const struct
     {NUM_NODE_TYPES, "__NUM_NODE_TYPES__"},
 };
 #undef LIT_DEF
+
+
+
+static Node* Expression(Parser* parser);
+
+static Node* Equality(Parser* parser);
+
+static Node* Comparison(Parser* parser);
+
+static Node* Term(Parser* parser);
+
+static Node* Factor(Parser* parser);
+
+static Node* Unary(Parser* parser);
+
+static Node* Primary(Parser* parser);
 
 
 
