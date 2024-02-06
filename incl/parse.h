@@ -80,6 +80,8 @@ Token* Parser_next(Parser* parser);
 
 Token* Parser_peek(Parser* parser);
 
+bool Parser_match(Parser* parser, TokenType type, ...);
+
 bool Parser_eof(Parser* parser);
 
 Node* Parser_parse(Parser* parser);

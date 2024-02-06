@@ -1,4 +1,5 @@
 #include "../incl/parse.h"
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -107,6 +108,29 @@ Token* Parser_next(Parser* parser)
 Token* Parser_peek(Parser* parser)
 {
     return &parser->current;
+}
+
+
+
+#define MATCH(parser, type, ...) Parser_match(parser, type, __VA_ARGS__)
+bool Parser_match(Parser* parser, TokenType type, ...) 
+{
+    bool valid = true;
+    va_list args;
+    va_start(args, type);
+    Token* token;
+
+    while (valid && type != EOF)
+    {
+        if (Parser_peek(parser)->type != type)
+            valid = false;
+
+
+        type = va_arg(args, TokenType);
+    }
+
+    va_end(args);
+    return valid;
 }
 
 
