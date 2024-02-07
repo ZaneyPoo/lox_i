@@ -1,4 +1,5 @@
 #include "../incl/parse.h"
+#include "../incl/utils.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,12 +41,31 @@ static Node* Primary(Parser* parser);
 
 
 
-Node* Node_new(NodeType type)
+// TODO: Implement this variadic version when ready
+// Node* Node_new(NodeType type, void* args, ...)
+Node* Node_new(NodeType type) 
 {
     Node* new_node = malloc(sizeof(Node));
 
     if (new_node)
         new_node->type = type;
+
+    // switch (type)
+    // {
+    //     case NodeExpr:
+    //     case NodeExprEquality:
+    //     case NodeExprComparison:
+    //     case NodeExprTerm:
+    //     case NodeExprFactor:
+    //     case NodeExprUnary:
+    //     case NodeExprPrimary:
+    //     case NodeExprPrimaryLiteral:
+    //     case NodeExprPrimaryGrouping:
+
+    //     case NUM_NODE_TYPES:
+    //         LOG_FATAL("NUM_NODE_TYPES shouldn't be used anywhere!");
+    //         exit(EXIT_FAILURE);
+    // }
 
     return new_node;
 }
@@ -112,25 +132,26 @@ Token* Parser_peek(Parser* parser)
 
 
 
-#define MATCH(parser, type, ...) Parser_match(parser, type, __VA_ARGS__)
+#define MATCH(parser, type, ...) Parser_match(parser, type, __VA_ARGS__, TOKEN_EOF)
 bool Parser_match(Parser* parser, TokenType type, ...) 
 {
-    bool valid = true;
     va_list args;
     va_start(args, type);
-    Token* token;
 
-    while (valid && type != EOF)
+    while (type != TOKEN_EOF)
     {
-        if (Parser_peek(parser)->type != type)
-            valid = false;
-
+        if (Parser_peek(parser)->type == type)
+        {
+            Parser_next(parser);
+            va_end(args);
+            return true;
+        }
 
         type = va_arg(args, TokenType);
     }
 
     va_end(args);
-    return valid;
+    return false;
 }
 
 
@@ -158,11 +179,21 @@ static Node* Expression(Parser* parser)
 
 static Node* Equality(Parser* parser)
 {
-    Node* comparison = Comparison(parser);
+    Node* equality = Comparison(parser);
 
-    // TODO: Finish this
+    while (MATCH(parser, TOKEN_BANG, TOKEN_EQ)) 
+    {
+        Node* lhs = equality;
+        Token operator = parser->prev;
+        Node* rhs = Comparison(parser);
 
-    return comparison;
+        equality = Node_new(NodeExprComparison);
+        equality->NodeExpBinary.left = lhs;
+        equality->NodeExpBinary.oper = operator;
+        equality->NodeExpBinary.right = rhs;
+    }
+
+    return equality;
 }
 
 
@@ -171,6 +202,9 @@ static Node* Comparison(Parser* parser)
 {
     Node* term = Term(parser);
     // TODO: Finish this
+    
+    
+
     return term;
 }
 
