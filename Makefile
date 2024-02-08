@@ -1,4 +1,4 @@
-.PHONY: all run clean valg debug test test-clean help
+.PHONY: all run clean valg debug help
 export
 
 CC       := gcc
@@ -45,11 +45,13 @@ debug: $(BIN)
 	gdb -tui ./$<
 
 clean:
-	@rm ./$(BIN)
 	@rm $(foreach obj, $(OBJ_FILES), $(obj))
+	@rm ./$(BIN)
 
 
 # Testing ----------------------------------------
+
+.PHONY: test test-all test-lex test-parse test-clean
 
 TEST_PREFIX := test_
 TEST_DIR := tests
@@ -67,7 +69,7 @@ $(TEST_BINS): %.test: %.c $(CORE_OBJS)
 $(UNITY): $(UNITY_H)
 	$(CC) $(CPPFLAG) $(CFLAGS) -o $@ -c $<
 
-test: $(TEST_BINS) 
+test-all: $(TEST_BINS) 
 	for test in $(TEST_BINS); do echo "Running $$test" && ./$$test; done
 
 test-clean: 
