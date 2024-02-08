@@ -2,7 +2,6 @@
 #define ZLOX_UTILS_H_
 #include <stddef.h>
 
-#define LOGGING_ENABLE
 
 typedef enum LogLevel
 {
@@ -12,11 +11,21 @@ typedef enum LogLevel
     LOG_LVL_WARN,
     LOG_LVL_ERROR,
     LOG_LVL_FATAL,
+    NUM_LOG_LVLS,
+    LOG_LVL_INVALID,
 } LogLevel;
+
+#define LOGGING_ENABLE
 
 // TODO: flesh this out and actually use it
 
 void log_print(LogLevel lvl, const char* msg);
+
+void log_set_output_lvl(LogLevel lvl);
+
+LogLevel log_get_output_lvl(void);
+
+LogLevel log_name_to_lvl(const char* name);
 
 #ifdef LOGGING_ENABLE
 

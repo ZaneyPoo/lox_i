@@ -7,32 +7,76 @@
 #define LOCAL_BUF_SIZE 1024
 #define MAX_STR_SIZE 101
 
-#define ESC 0x1b
-#define ANSI_RESET "ESC[0m"
-#define ANSI_BOLD "ESC[1m"
-#define ANSI_RED "ESC[31"
+#define STR_(x) #x
+#define STR(x) STR_(x)
 
-#define WRAP(str, seq...) ANSI_##seq str ANSI_RESET
-
+#define ESC \x1b
+#define ANSI_RESET ESC[0m
+#define ANSI_BOLD ESC[1m
+#define ANSI_RED ESC[31m
 // Oh god what have I done
 // Macros are the Opium of the C masses
-static const char* LOG_LVL_NAMES[] = {
-    WRAP("[TRACE]", BOLD),
-    WRAP("[DEBUG]", BOLD),
-    WRAP("[INFO]", BOLD),
-    WRAP(WRAP("[WARN]", BOLD), RED),
-    WRAP(WRAP("[ERROR]", BOLD), RED),
-    WRAP(WRAP("[FATAL]", BOLD), RED),
-};
-static const char LOG_FORMAT_SPEC[] = "%s:%d: %s: \"%s\": %s\n"; 
 
+#define WRAP(str, seq...) STR(ANSI_##seq) str STR(ANSI_RESET)
+
+static const char LOG_FORMAT_SPEC[] = "%s:%d: %s: \"%s\": %s\n"; 
+static LogLevel LOG_OUTPUT_LVL = LOG_LVL_INFO;
+
+#define LIT_DEF(lvl, display) {LOG_LVL_##lvl, #lvl, display}
+static struct 
+{
+    LogLevel lvl;
+    const char* compare;
+    const char* display;
+} LIT_LOG_LVLS[] = {
+    LIT_DEF(TRACE, WRAP("[TRACE]", BOLD)),
+    LIT_DEF(DEBUG, WRAP("[DEBUG]", BOLD)),
+    LIT_DEF(INFO, WRAP("[INFO]", BOLD)),
+    LIT_DEF(WARN, WRAP(WRAP("[WARN]", BOLD), RED)),
+    LIT_DEF(ERROR, WRAP(WRAP("[ERROR]", BOLD), RED)),
+    LIT_DEF(FATAL, WRAP(WRAP("[FATAL]", BOLD), RED)),
+    {NUM_LOG_LVLS, "You shouldn't be here!", "SOMETHING'S WRONG"},
+};
+
+#undef LIT_DEF
+#undef WRAP
+#undef STR_
+#undef STR
 
 
 void log_print(LogLevel lvl, const char* msg)
 {
-    fprintf(stderr,
-            LOG_FORMAT_SPEC,
-            __FILE__, __LINE__, LOG_LVL_NAMES[lvl], __PRETTY_FUNCTION__, msg);
+    if (lvl >= LOG_OUTPUT_LVL)
+        fprintf(stderr,
+                LOG_FORMAT_SPEC,
+                __FILE__, __LINE__, LIT_LOG_LVLS[lvl].display, __PRETTY_FUNCTION__, msg);
+}
+
+
+
+void log_set_output_lvl(LogLevel lvl)
+{
+    LOG_OUTPUT_LVL = lvl;
+}
+
+
+
+LogLevel log_get_output_lvl(void)
+{
+    return LOG_OUTPUT_LVL;
+}
+
+
+
+LogLevel log_name_to_lvl(const char* name) 
+{
+    for (LogLevel i = 0; i < NUM_LOG_LVLS; ++i)
+    {
+        if (strcmp(name, LIT_LOG_LVLS[i].compare) == 0)
+            return i;
+    }
+
+    return LOG_LVL_INVALID;
 }
 
 
