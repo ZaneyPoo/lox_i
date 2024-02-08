@@ -1,4 +1,5 @@
 #include "../incl/lex.h"
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -272,20 +273,21 @@ static inline bool consume_ident(Lexer* lexer, Token* token)
 
 
 
-Lexer Lexer_new(const char* data, size_t len)
+Lexer Lexer_new(InputStr* input)
 {
-    char* str = malloc(sizeof(char) * len);
+    assert(input);
 
-    // TODO: think about removing this for a failure return instead
-    if (!str)
-    {
-        fprintf(stderr, "Lexer error: allocation request of %zu bytes failed\n", len);
-        exit(EXIT_FAILURE);
-    }
+    Lexer lexer = {
+        .data = input->text, 
+        .data_len = input->len,
+        .cursor = 0,
+        .line = 0,
+        .current = *input->text,
+    };
 
-    strncpy(str, data, len);
+    *input = (InputStr){0};
 
-    return (Lexer){str, len, 0, 0, *str};
+    return lexer;
 }
 
 
@@ -297,7 +299,6 @@ void Lexer_delete(Lexer* lexer)
     lexer->data_len = lexer->cursor = 0;
     lexer->current = '\0';
 }
-
 
 
 

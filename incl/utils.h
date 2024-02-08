@@ -1,5 +1,6 @@
 #ifndef ZLOX_UTILS_H_
 #define ZLOX_UTILS_H_
+#include <stddef.h>
 
 #define LOGGING_ENABLE
 
@@ -36,5 +37,21 @@ void log_print(LogLevel lvl, const char* msg);
 #define LOG_FATAL(msg) 
 
 #endif // LOGGING_ENABLE
+
+
+typedef struct InputStr 
+{
+    char* text;
+    size_t len;
+} InputStr;
+
+
+InputStr InputStr_new(const char* src, size_t len);
+
+InputStr InputStr_from_file(const char* filename);
+
+InputStr InputStr_from_stdin(const char prompt_msg[], size_t max);
+
+void InputStr_delete(InputStr* input_string);
 
 #endif // ZLOX_UTILS_H_

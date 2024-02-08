@@ -1,5 +1,6 @@
 #ifndef ZLOX_LEX_H_
 #define ZLOX_LEX_H_
+#include "utils.h"
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -84,7 +85,7 @@ typedef struct Lexer
     char current;
 } Lexer;
 
-Lexer Lexer_new(const char* data, size_t len);
+Lexer Lexer_new(InputStr* input);
 
 void Lexer_delete(Lexer* lexer);
 

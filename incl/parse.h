@@ -13,10 +13,10 @@ typedef enum NodeType
     NodeExprTerm,
     NodeExprFactor,
     NodeExprUnary,
-    NodeExprPrimary,
     NodeExprPrimaryLiteral,
     NodeExprPrimaryGrouping,
     NUM_NODE_TYPES,
+    NodeParseError,
 } NodeType;
 
 
@@ -26,33 +26,49 @@ struct Node
     NodeType type;
     union 
     {
+        // NodeExpr
         struct 
         {
             Node* data;
         };
 
+        // NodeExprEquality
+        // NodeExprComparison 
+        // NodeExprTerm
+        // NodeExprFactor
         struct 
         {
             Node* left;
             Token oper;
             Node* right;
-        } NodeExpBinary;
+        } NodeExprBinary;
 
+        // NodeExprUnary
         struct 
         {
             Token oper;
-            Node* data;
+            Node* right;
         } NodeExprUnary;
 
 
+        // NodeExprPrimaryLiteral
         Token literal;
 
+        // NodeExprPrimaryGrouping
         struct 
         {
             Token open_paren;
             Node* expr;
             Token close_paren;
         } NodeExprPrimaryGrouping;
+
+        // NodeParseError
+        // This is kinda hacky?
+        struct 
+        {
+            Token token;
+            const char* err_msg;
+        } NodeParseError;
     };
 };
 
@@ -70,9 +86,11 @@ typedef struct Parser
     Lexer* lexer;
     Token current;
     Token prev;
+    bool had_error;
+    bool panic_mode;
 } Parser;
 
-Parser Parser_new(Lexer* lexer);
+void Parser_init(Parser* parser, Lexer* lexer);
 
 void Parser_delete(Parser* parser);
 
@@ -82,8 +100,12 @@ Token* Parser_peek(Parser* parser);
 
 bool Parser_match(Parser* parser, TokenType type, ...);
 
+void Parser_consume(Parser* parser, TokenType type, const char* message);
+
 bool Parser_eof(Parser* parser);
 
 Node* Parser_parse(Parser* parser);
+
+void Parser_synchronize(Parser* parser);
 
 #endif // ZLOX_PARSE_H_

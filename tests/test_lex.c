@@ -145,7 +145,8 @@ void check_tokens(const Token* tokens, size_t tokens_len, const TokenType* ref, 
 void token_test(const char* str, size_t str_size, const TokenType* ref, size_t ref_size)
 {
 
-    Lexer lexer = Lexer_new(str, str_size);
+    InputStr input = InputStr_new(str, str_size);
+    Lexer lexer = Lexer_new(&input);
     Token tokens[LOCAL_BUF_SIZE] = {0};
 
     get_tokens(&lexer, tokens, LOCAL_BUF_SIZE);
