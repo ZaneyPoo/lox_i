@@ -45,9 +45,14 @@ static void prompt_keypress(void)
 
 
 
+// len is assumed to include space for the null terminator
 InputStr InputStr_new(const char* src, size_t len)
 {
-    InputStr input_str = {.len = len};
+    InputStr input_str = {
+        .text = malloc(sizeof(char) * len),
+        .len = len
+    };
+
     strncpy(input_str.text, src, len);
 
     return input_str;
